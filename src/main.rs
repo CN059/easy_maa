@@ -4,7 +4,6 @@ use log;
 use server3::sc_send;
 use std::env;
 use std::error::Error;
-use std::fmt::Debug;
 use std::path::PathBuf;
 use std::process::{Command, exit};
 use std::time::Duration;
