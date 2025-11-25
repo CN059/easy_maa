@@ -1,0 +1,101 @@
+# Easy MAA 运行时配置文件 (TOML 格式)
+# 
+# 此文件用于在 debug 开发模式下快速调整运行参数
+# 路径: ~/.config/easy_maa/runtime.toml
+# 
+# 在生产环境中，配置应位于: ~/.config/easy_maa/easy_maa.toml
+#
+# 配置优先级：
+# 1. EASY_MAA_CONFIG 环境变量指定的路径
+# 2. ~/.config/easy_maa/runtime.toml (仅 debug 构建)
+# 3. ~/.config/easy_maa/easy_maa.toml
+# 4. 环境变量 + 硬编码默认值
+
+# ============================================================================
+# 模拟器启动配置
+# ============================================================================
+[emulator_start]
+# 显示标签 - 在 UI 和日志中使用
+label = "启动模拟器"
+
+# 要执行的程序名称或路径
+# 示例: "podman", "docker", "/usr/bin/podman"
+program = "podman"
+
+# 传给程序的参数列表
+# 示例: ["start", "my-container"] 会执行 `podman start my-container`
+args = ["start", "maa-container"]
+
+# 是否需要 sudo 权限执行
+# 注意: 需要配置 sudoers 允许无密码执行这个命令
+# 示例: echo 'your_user ALL=(ALL) NOPASSWD: /usr/bin/podman start maa-container' | sudo tee /etc/sudoers.d/maa
+requires_sudo = false
+
+# (可选) 指令执行的工作目录，支持 ~/ 展开
+# 例如: working_dir = "~/maa_workspace"
+# working_dir = null
+
+# (可选) 额外的环境变量
+# [emulator_start.env]
+# KEY = "VALUE"
+
+# ============================================================================
+# 模拟器停止配置
+# ============================================================================
+[emulator_stop]
+label = "关闭模拟器"
+program = "podman"
+args = ["stop", "maa-container"]
+requires_sudo = false
+
+# ============================================================================
+# MAA 启动配置
+# ============================================================================
+[maa_startup]
+# 显示标签
+label = "MAA 启动"
+
+# MAA 可执行程序路径
+# 通常情况下可以直接使用 "maa" (需要在 PATH 中)
+# 或者完整路径如: "/home/user/.local/share/maa/bin/maa"
+program = "maa"
+
+# 参数列表
+# 标准的 MAA 启动命令是 `maa startup <profile>`
+# 其中 profile 是配置文件名，通常是 "Official"
+args = ["startup", "Official"]
+
+# MAA 通常不需要 sudo 权限
+requires_sudo = false
+
+# (可选) 工作目录 - MAA 通常需要在特定目录下运行以找到配置文件
+# working_dir = "~/.local/share/maa"
+
+# (可选) 环境变量 - 有时需要设置特定的环境来运行 MAA
+# [maa_startup.env]
+# LD_LIBRARY_PATH = "~/.local/share/maa/lib"
+# MAA_CONFIG_DIR = "~/.config/maa"
+
+# ============================================================================
+# 环境变量覆盖说明
+# ============================================================================
+# 
+# 如果在配置文件中指定了命令，会完全覆盖环境变量的值。
+# 
+# 但如果配置文件缺失或解析失败，系统会使用环境变量：
+# 
+#   CONTAINER_NAME         - 模拟器容器名称 (默认: "maa-container")
+#   EMULATOR_PROGRAM       - 模拟器程序名 (默认: "podman")
+#   EMULATOR_NEEDS_SUDO    - 模拟器是否需要 sudo (默认: false)
+#   MAA_BIN                - MAA 程序路径 (默认: "maa")
+#   MAA_PROFILE            - MAA 配置文件名 (默认: "Official")
+#   SENDKEY                - Server酱推送的 key (可选)
+#
+# 示例:
+#   export CONTAINER_NAME="my-emulator"
+#   export EMULATOR_PROGRAM="docker"
+#   export EMULATOR_NEEDS_SUDO="1"
+#   export MAA_BIN="/opt/maa/bin/maa"
+#   export MAA_PROFILE="TestServer"
+#   export SENDKEY="sctp123456txxxxxxxx"
+
